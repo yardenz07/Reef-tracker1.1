@@ -5,32 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Reef Tracker</title>
 
-  <!-- הגדרות PWA לאייפון (iOS Standalone) -->
+  <!-- הגדרות מקיפות ל-iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ReefTracker">
   <meta name="theme-color" content="#030b17">
 
-  <!-- אייקון למסך הבית (SVG מוטמע) -->
+  <!-- Manifest מוטמע למניעת ניקוי זיכרון ב-iOS -->
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Reef%20Tracker%22%2C%22short_name%22%3A%22ReefTracker%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23030b17%22%2C%22theme_color%22%3A%22%23030b17%22%7D">
+
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='120' fill='%23051329'/%3E%3Cpath d='M256 80 C180 180 120 280 120 350 A136 136 0 0 0 392 350 C392 280 332 180 256 80 Z' fill='%2300f0ff'/%3E%3Ccircle cx='256' cy='340' r='50' fill='%23ff5e7e'/%3E%3C/svg%3E">
 
-  <!-- Chart.js מ-CDN (נטען אוטומטית) -->
+  <!-- Chart.js מ-CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
       --bg-dark: #030b17;
-      --card-bg: rgba(9, 26, 51, 0.75);
-      --card-border: rgba(0, 240, 255, 0.18);
+      --card-bg: rgba(9, 26, 51, 0.85);
+      --card-border: rgba(0, 240, 255, 0.2);
       --text-main: #f0f6fc;
       --text-muted: #8ba2c0;
 
-      /* צבעי אלמנטים בריף */
-      --c-alk: #00f0ff; /* טורקיז זוהר */
-      --c-ca: #ff5e7e;  /* קורל ניאון */
-      --c-mg: #b57cff;  /* סגול עמוק */
-      --c-no3: #ffb84d; /* זהב שונית */
-      --c-po4: #4ef2a7; /* ירוק מנטה */
+      --c-alk: #00f0ff;
+      --c-ca: #ff5e7e;
+      --c-mg: #b57cff;
+      --c-no3: #ffb84d;
+      --c-po4: #4ef2a7;
     }
 
     * {
@@ -42,10 +43,10 @@
     }
 
     body {
-      background: radial-gradient(circle at top, #0b2247 0%, var(--bg-dark) 70%);
+      background: radial-gradient(circle at top, #0b2247 0%, var(--bg-dark) 75%);
       color: var(--text-main);
       min-height: 100vh;
-      padding-bottom: calc(90px + env(safe-area-inset-bottom));
+      padding-bottom: calc(95px + env(safe-area-inset-bottom));
       padding-top: max(16px, env(safe-area-inset-top));
     }
 
@@ -71,7 +72,6 @@
       margin: 0 auto;
     }
 
-    /* כרטיסי תצוגה */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -80,10 +80,9 @@
       border-radius: 18px;
       padding: 16px;
       margin-bottom: 14px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
     }
 
-    /* עמוד 1: הזנת ערכים */
     .param-row {
       display: flex;
       flex-direction: column;
@@ -111,16 +110,15 @@
 
     input[type="number"] {
       flex: 1;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 12px;
       padding: 12px 14px;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       color: #fff;
       direction: ltr;
       text-align: right;
       outline: none;
-      transition: border-color 0.2s;
     }
 
     input[type="number"]:focus {
@@ -136,19 +134,12 @@
       font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      transition: transform 0.1s, opacity 0.2s;
     }
 
     .btn-save:active {
       transform: scale(0.96);
-      opacity: 0.9;
     }
 
-    /* עמוד 2: גרפים */
     .filter-pills {
       display: flex;
       background: rgba(255, 255, 255, 0.05);
@@ -167,7 +158,6 @@
       border-radius: 9px;
       cursor: pointer;
       color: var(--text-muted);
-      transition: all 0.2s;
     }
 
     .filter-pill.active {
@@ -207,7 +197,6 @@
       width: 100%;
     }
 
-    /* עמוד 3: טבלה ולוגים */
     .log-item {
       display: flex;
       flex-direction: column;
@@ -235,9 +224,6 @@
       padding: 6px 14px;
       border-radius: 10px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
     }
 
     .btn-copy:active {
@@ -272,7 +258,6 @@
       text-align: right;
     }
 
-    /* גיבוי וייצוא נתונים */
     .backup-actions {
       display: flex;
       gap: 10px;
@@ -292,13 +277,12 @@
       text-align: center;
     }
 
-    /* תפריט ניווט תחתון (Tab Bar) */
     .tab-bar {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(3, 11, 23, 0.92);
+      background: rgba(3, 11, 23, 0.94);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -331,7 +315,6 @@
       fill: currentColor;
     }
 
-    /* הודעת חיווי מהירה (Toast) */
     #toast {
       position: fixed;
       top: max(20px, env(safe-area-inset-top));
@@ -365,7 +348,7 @@
   </header>
 
   <main class="container">
-    <!-- עמוד 1: הזנת ערכים -->
+    <!-- עמוד 1: הזנה -->
     <div id="page-input" class="page active">
       <div id="input-container"></div>
     </div>
@@ -388,7 +371,7 @@
       </div>
     </div>
 
-    <!-- עמוד 3: היסטוריה, העתקה וגיבוי -->
+    <!-- עמוד 3: היסטוריה -->
     <div id="page-history" class="page">
       <div id="logs-container"></div>
 
@@ -400,7 +383,6 @@
     </div>
   </main>
 
-  <!-- סרגל טאבים תחתון -->
   <nav class="tab-bar">
     <button class="tab-btn active" onclick="switchPage('input', this)">
       <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
@@ -417,7 +399,6 @@
   </nav>
 
   <script>
-    // הגדרת הפרמטרים
     const PARAMS = [
       { key: 'alkalinity', name: 'אלקליניטי', unit: 'dKH', color: 'var(--c-alk)', hex: '#00f0ff' },
       { key: 'calcium', name: 'קלציום', unit: 'ppm', color: 'var(--c-ca)', hex: '#ff5e7e' },
@@ -426,30 +407,50 @@
       { key: 'phosphate', name: 'פוספאט', unit: 'ppm', color: 'var(--c-po4)', hex: '#4ef2a7' }
     ];
 
-    let db;
     let selectedDays = 14;
     let selectedChartParam = 'alkalinity';
     let chartInstance = null;
 
-    // --- אתחול IndexedDB ובקשת Persistent Storage ---
-    function initDB() {
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open('ReefTrackerDB', 1);
+    // מפתח שמירה קבוע ב-localStorage
+    const STORAGE_KEY = 'REEF_TRACKER_DATA_V1';
+
+    // --- שכבת אחסון כפולה (Dual-Storage Engine) ---
+    function getAllLogsSync() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        console.error("Storage read error:", e);
+        return [];
+      }
+    }
+
+    function saveAllLogsSync(logs) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+        // סנכרון במקביל גם ל-IndexedDB למקרה הצורך
+        syncToIndexedDB(logs);
+      } catch (e) {
+        console.error("Storage write error:", e);
+      }
+    }
+
+    function syncToIndexedDB(logs) {
+      try {
+        const req = indexedDB.open('ReefTrackerDB', 2);
         req.onupgradeneeded = (e) => {
-          const database = e.target.result;
-          if (!database.objectStoreNames.contains('logs')) {
-            database.createObjectStore('logs', { keyPath: 'dateStr' });
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('logs')) {
+            db.createObjectStore('logs', { keyPath: 'dateStr' });
           }
         };
         req.onsuccess = (e) => {
-          db = e.target.result;
-          if (navigator.storage && navigator.storage.persist) {
-            navigator.storage.persist();
-          }
-          resolve(db);
+          const db = e.target.result;
+          const tx = db.transaction('logs', 'readwrite');
+          const store = tx.objectStore('logs');
+          logs.forEach(item => store.put(item));
         };
-        req.onerror = (e) => reject(e);
-      });
+      } catch (err) {}
     }
 
     function getTodayKey() {
@@ -457,8 +458,8 @@
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
 
-    // --- שמירת נתונים ב-IndexedDB ---
-    async function saveParam(key) {
+    // --- שמירת פרמטר בודד ---
+    function saveParam(key) {
       const input = document.getElementById(`input-${key}`);
       const val = parseFloat(input.value);
       if (isNaN(val)) return;
@@ -466,35 +467,26 @@
       const dateStr = getTodayKey();
       const roundedVal = Math.round(val * 100) / 100;
 
-      const tx = db.transaction('logs', 'readwrite');
-      const store = tx.objectStore('logs');
+      let logs = getAllLogsSync();
+      let record = logs.find(l => l.dateStr === dateStr);
 
-      const getReq = store.get(dateStr);
-      getReq.onsuccess = () => {
-        const record = getReq.result || { dateStr: dateStr, timestamp: Date.now() };
-        record[key] = roundedVal;
-        record.timestamp = Date.now();
-        store.put(record);
-      };
+      if (!record) {
+        record = { dateStr: dateStr, timestamp: Date.now() };
+        logs.push(record);
+      }
 
-      tx.oncomplete = () => {
-        input.value = '';
-        showToast(`נשמר: ${roundedVal}`);
-        renderLogs();
-      };
+      record[key] = roundedVal;
+      record.timestamp = Date.now();
+
+      // שמירה מיידית בדיסק
+      saveAllLogsSync(logs);
+
+      input.value = '';
+      showToast(`נשמר: ${roundedVal}`);
+      renderLogs();
     }
 
-    // שליפת כל הנתונים
-    function getAllLogs() {
-      return new Promise((resolve) => {
-        const tx = db.transaction('logs', 'readonly');
-        const store = tx.objectStore('logs');
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result || []);
-      });
-    }
-
-    // --- ממשק משתמש ורינדור ---
+    // --- רינדור כרטיסי הזנה ---
     function renderInputCards() {
       const container = document.getElementById('input-container');
       container.innerHTML = PARAMS.map(p => `
@@ -522,9 +514,9 @@
       `).join('');
     }
 
-    // --- ניהול הגרף ---
-    async function updateChart() {
-      const logs = await getAllLogs();
+    // --- גרף מגמות ---
+    function updateChart() {
+      const logs = getAllLogsSync();
       const cutoff = new Date();
       cutoff.setDate(cutoff.getDate() - selectedDays);
 
@@ -537,14 +529,16 @@
         return `${parts[2]}/${parts[1]}`;
       });
       const data = filtered.map(l => l[selectedChartParam]);
-
       const paramObj = PARAMS.find(p => p.key === selectedChartParam);
 
       if (chartInstance) {
         chartInstance.destroy();
       }
 
-      const ctx = document.getElementById('reefChart').getContext('2d');
+      const canvas = document.getElementById('reefChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
       chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -558,15 +552,13 @@
             pointBackgroundColor: paramObj.hex,
             pointRadius: 5,
             fill: true,
-            tension: 0.3
+            tension: 0.35
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false }
-          },
+          plugins: { legend: { display: false } },
           scales: {
             x: {
               grid: { color: 'rgba(255, 255, 255, 0.06)' },
@@ -595,8 +587,8 @@
     }
 
     // --- טבלת היסטוריה והעתקה ---
-    async function renderLogs() {
-      const logs = await getAllLogs();
+    function renderLogs() {
+      const logs = getAllLogsSync();
       const container = document.getElementById('logs-container');
 
       if (!logs.length) {
@@ -629,8 +621,8 @@
       }).join('');
     }
 
-    async function copyLog(dateStr) {
-      const logs = await getAllLogs();
+    function copyLog(dateStr) {
+      const logs = getAllLogsSync();
       const log = logs.find(l => l.dateStr === dateStr);
       if (!log) return;
 
@@ -648,8 +640,8 @@
     }
 
     // --- ייצוא וייבוא גיבוי ---
-    async function exportData() {
-      const logs = await getAllLogs();
+    function exportData() {
+      const logs = getAllLogsSync();
       const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -664,18 +656,14 @@
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = async (evt) => {
+      reader.onload = (evt) => {
         try {
           const data = JSON.parse(evt.target.result);
           if (Array.isArray(data)) {
-            const tx = db.transaction('logs', 'readwrite');
-            const store = tx.objectStore('logs');
-            data.forEach(item => store.put(item));
-            tx.oncomplete = () => {
-              showToast('הנתונים יובאו בהצלחה!');
-              renderLogs();
-              updateChart();
-            };
+            saveAllLogsSync(data);
+            showToast('הנתונים יובאו בהצלחה!');
+            renderLogs();
+            updateChart();
           }
         } catch {
           alert('שגיאה בקריאת קובץ הגיבוי');
@@ -684,7 +672,7 @@
       reader.readAsText(file);
     }
 
-    // --- ניווט ועזרים ---
+    // --- ניווט בין טאבים ---
     function switchPage(pageId, btn) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -707,10 +695,10 @@
       setTimeout(() => t.classList.remove('show'), 2200);
     }
 
-    // אתחול בעלייה
-    window.addEventListener('DOMContentLoaded', async () => {
-      await initDB();
+    // הפעלה בעלייה
+    window.addEventListener('DOMContentLoaded', () => {
       renderInputCards();
+      renderLogs();
     });
   </script>
 </body>
